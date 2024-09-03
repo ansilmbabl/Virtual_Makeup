@@ -1,3 +1,6 @@
+This is a cloned version of [Virtual_Makeup](https://github.com/Jayanths9/Virtual_Makeup)
+updated with cv2 trackbar to experiments with different set of make up patterns
+
 # Virtual Makeup Using Mediapipe
 ## Clone  and Run
 ```
