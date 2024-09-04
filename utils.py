@@ -61,7 +61,7 @@ def read_landmarks(image: np.array):
 
 # based on input facial features create make w.r.to colors
 def add_mask(
-    mask: np.array, idx_to_coordinates: dict, face_connections: list, colors: list
+    mask: np.array, idx_to_coordinates: dict, face_connections: list, colors: list, kernel_size:int = 7, sigmaX:int = 4 
 ):
     """
     mask: image filled with 0's
@@ -76,5 +76,5 @@ def add_mask(
         cv2.fillPoly(mask, [points], colors[i])
 
     # smoothening of image
-    mask = cv2.GaussianBlur(mask, (7, 7), 4)
+    mask = cv2.GaussianBlur(mask, (kernel_size, kernel_size), sigmaX)
     return mask

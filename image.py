@@ -30,7 +30,7 @@ colors_map = {
     "EYEBROW_RIGHT": [19, 69, 139],  # Dark Brown in BGR
 }
 
-def update_image(image, weight, colors_map):
+def update_image(image, weight, colors_map, kernel_size, sigmaX):
     # Create a new mask
     mask = np.zeros_like(image)
     
@@ -43,6 +43,8 @@ def update_image(image, weight, colors_map):
         idx_to_coordinates=face_landmarks,
         face_connections=[face_points[idx] for idx in face_elements],
         colors=[colors_map[idx] for idx in face_elements],
+        kernel_size = kernel_size, 
+        sigmaX = sigmaX
     )
     
     # Combine the image and mask with the updated weight
@@ -55,8 +57,12 @@ def on_change(val):
     global colors_map
     global image
     global weight
+    global kernel_size
+    global sigmaX
     
     weight = cv2.getTrackbarPos('Effect Weight', 'Makeup Application') / 100
+    kernel_size = cv2.getTrackbarPos('Smoothness - kernel', 'Makeup Application')
+    sigmaX = cv2.getTrackbarPos('Smoothness - sigma', 'Makeup Application')
     
     # Update colors based on trackbar positions for all features
     for feature in face_elements:
@@ -67,13 +73,15 @@ def on_change(val):
         ]
     
     # Update the image with the new settings
-    output = update_image(image, weight, colors_map)
+    output = update_image(image, weight, colors_map, kernel_size, sigmaX)
     cv2.imshow('Makeup Application output', output)
 
 def main(image_path):
     global colors_map
     global image
     global weight
+    global kernel_size
+    global sigmaX
 
     weight = 0.2  # Initial blending weight
     
@@ -85,6 +93,8 @@ def main(image_path):
     
     # Create trackbars for weight and color adjustment
     cv2.createTrackbar('Effect Weight', 'Makeup Application', int(weight * 100), 100, on_change)
+    cv2.createTrackbar('Smoothness - kernel', 'Makeup Application', 7, 50, on_change)
+    cv2.createTrackbar('Smoothness - sigma', 'Makeup Application', 4, 50, on_change)
     
     # Trackbars for color adjustments for all features
     for feature in face_elements:
@@ -93,7 +103,7 @@ def main(image_path):
         cv2.createTrackbar(f'{feature}_R', 'Makeup Application', colors_map[feature][2], 255, on_change)
     
     # Initial display
-    output = update_image(image, weight, colors_map)
+    output = update_image(image, weight, colors_map, kernel_size, sigmaX)
     cv2.imshow('Makeup Application output', output)
     
     # Wait for user interaction
